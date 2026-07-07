@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "FitLens",
+    "slug": "fitlens",
+    "scheme": "fitlens",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#EAF6FF",
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "FitLens uses the camera to snap photos of your meals."
+      }
+    },
+    "android": {
+      "permissions": [
+        "CAMERA"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#EAF6FF",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "FitLens uses the camera to snap photos of your meals."
+        }
+      ],
+      "expo-asset",
+      "expo-font",
+      "expo-apple-authentication",
+      "expo-web-browser",
+      "expo-status-bar",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#EAF6FF",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 100
+        }
+      ]
+    ]
+  }
+}

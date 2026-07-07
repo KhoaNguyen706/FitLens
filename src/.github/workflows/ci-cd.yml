@@ -1,0 +1,65 @@
+```yaml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+  REGISTRY_PASS: ${{ secrets.REGISTRY_PASS }}
+  DOCKER_REGISTRY: your-registry.com
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ hashFiles('**/pom.xml') }}
+
+      - name: Build and Test Java Backend
+        run: |
+          mvn clean install -DskipTests
+          mvn test
+
+      - name: Build Docker Image
+        run: |
+          docker build -t $DOCKER_REGISTRY/fitlens-backend:latest .
+
+      - name: Login to Container Registry
+        run: |
+          echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin $DOCKER_REGISTRY
+
+      - name: Push Docker Image
+        run: |
+          docker push $DOCKER_REGISTRY/fitlens-backend:latest
+
+      - name: Build and Test Mobile App
+        run: |
+          cd mobile
+          npm install
+          npm test
+          cd ..
+
+      - name: Archive Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-image
+          path: fitlens-backend*.tar.gz
+```
