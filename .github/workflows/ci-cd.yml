@@ -29,7 +29,23 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Build Backend Package
-        run: ./mvnw -Dmaven.test.skip=true package
+        run: |
+          set +e
+          ./mvnw -Dmaven.test.skip=true package > maven-build.log 2>&1
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            echo "### Maven backend build failed" >> "$GITHUB_STEP_SUMMARY"
+            echo '```text' >> "$GITHUB_STEP_SUMMARY"
+            tail -n 120 maven-build.log >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            tail -n 30 maven-build.log | while IFS= read -r line; do
+              escaped="${line//'%'/'%25'}"
+              escaped="${escaped//$'\n'/'%0A'}"
+              escaped="${escaped//$'\r'/'%0D'}"
+              echo "::error ::$escaped"
+            done
+          fi
+          exit "$status"
 
   mobile-frontend-build:
     name: Build Expo Web Frontend
