@@ -29,7 +29,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Build Backend Package
-        run: ./mvnw -DskipTests package
+        run: ./mvnw -Dmaven.test.skip=true package
 
   mobile-frontend-build:
     name: Build Expo Web Frontend
