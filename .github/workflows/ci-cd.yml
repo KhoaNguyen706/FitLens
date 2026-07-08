@@ -78,3 +78,21 @@ jobs:
         run: |
           cd ai-service
           python -m py_compile main.py
+
+  deploy-heroku:
+    name: Deploy Backend to Heroku
+    needs: backend-build-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.13.15
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: fit-lens
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
